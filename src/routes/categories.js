@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const categoryController = require("../controllers/categories"); // Corrigido para categories
+const categoryController = require("../controllers/categories");
+const { authorize } = require("../middleware/auth");
 
-router.post("/", categoryController.createCategory);
+router.post("/", authorize, categoryController.createCategory);
 
 module.exports = router;
