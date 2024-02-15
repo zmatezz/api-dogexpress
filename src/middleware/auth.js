@@ -1,8 +1,10 @@
 // middleware/authMiddleware.js
+const jwt = require("jsonwebtoken");
 const { decodeToken } = require("../services/auth");
 
 function authorize(req, res, next) {
-  const token = req.headers.authorization;
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
     return res
@@ -10,13 +12,15 @@ function authorize(req, res, next) {
       .json({ message: "Token de autenticação não fornecido." });
   }
 
-  try {
-    const decoded = decodeToken(token);
+  jwt.verify(token, process.env.JWT_PASS, (err, decoded) => {
+    if (err) {
+      return res
+        .status(403)
+        .json({ message: "Falha na autenticação do token." });
+    }
     req.user = decoded;
     next();
-  } catch (error) {
-    return res.status(401).json({ message: "Token inválido." });
-  }
+  });
 }
 
 module.exports = { authorize };
