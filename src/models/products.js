@@ -21,11 +21,12 @@ const schema = new Schema(
     },
     category: {
       type: String,
+
+      required: true,
     },
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
     },
   },
   {
@@ -33,6 +34,6 @@ const schema = new Schema(
   }
 );
 
-schema.pre("save", productCategory.fillCategoryName);
+schema.pre("save", productCategory.fillCategoryId);
 
 module.exports = mongoose.model("Product", schema);

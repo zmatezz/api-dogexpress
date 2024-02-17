@@ -1,10 +1,16 @@
 const mongoose = require("mongoose");
 
-const fillCategoryName = async function (next) {
+const fillCategoryId = async function (next) {
   try {
-    const category = await mongoose.model("Category").findById(this.categoryId);
-    if (category) {
-      this.category = category.name;
+    if (typeof this.category === "string") {
+      const category = await mongoose
+        .model("Category")
+        .findOne({ name: this.category });
+      if (category) {
+        this.categoryId = category._id;
+      } else {
+        throw new Error("Categoria não encontrada");
+      }
     }
     next();
   } catch (error) {
@@ -12,4 +18,4 @@ const fillCategoryName = async function (next) {
   }
 };
 
-module.exports = { fillCategoryName };
+module.exports = { fillCategoryId };
