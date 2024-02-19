@@ -3,6 +3,11 @@ const Schema = mongoose.Schema;
 
 const schema = new Schema(
   {
+    active: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
     name: {
       type: String,
       required: true,
