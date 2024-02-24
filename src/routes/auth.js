@@ -1,4 +1,3 @@
-// routes/authRoutes.js
 const express = require("express");
 const router = express.Router();
 const { generateToken } = require("../services/auth");
@@ -25,7 +24,6 @@ router.post("/login", async (req, res) => {
 
     res.json({ token });
   } catch (error) {
-    console.error("Erro ao fazer login:", error);
     res.status(500).json({ error: "Algo deu errado." });
   }
 });
