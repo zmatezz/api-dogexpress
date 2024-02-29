@@ -23,3 +23,45 @@ exports.createProduct = async (req, res) => {
     res.status(500).json({ error: "Something went wrong ☹" });
   }
 };
+
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.find();
+    const name = req.query.name;
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+};
+
+exports.getActiveProducts = async (req, res) => {
+  try {
+    const activeProducts = await Product.find({ active: true });
+    res.status(200).json(activeProducts);
+  } catch (error) {
+    console.error("Error fetching active products:", error);
+    res.status(500).json({ error: "Failed to fetch active products" });
+  }
+};
+
+exports.getInactiveProducts = async (req, res) => {
+  try {
+    const inactiveProducts = await Product.find({ active: false });
+    res.status(200).json(inactiveProducts);
+  } catch (error) {
+    console.error("Error fetching inactive products:", error);
+    res.status(500).json({ error: "Failed to fetch inactive products" });
+  }
+};
+
+exports.searchProductsByName = async (req, res) => {
+  try {
+    const productName = req.query.name;
+    const products = await Product.find({ name: new RegExp(productName, "i") });
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error searching products by name:", error);
+    res.status(500).json({ error: "Failed to search products by name" });
+  }
+};
