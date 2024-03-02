@@ -14,34 +14,43 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 const checkFile = (req, res, next) => {
-  if (!req.file) {
+  if (req.method === "POST" && !req.file) {
+    console.log("File not provided during creation");
     return res.status(400).json({ error: "File not provided" });
   }
+
   next();
 };
 
 const uploadToCloudinary = async (req, res, next) => {
   try {
-    if (!req.file) {
+    if (req.method === "POST" && !req.file) {
       return res.status(400).json({ error: "File not provided" });
     }
 
-    const result = await uploader.upload_stream(
-      {
-        resource_type: "image",
-        folder: "dogexpress",
-      },
-      (error, result) => {
-        if (error) {
-          console.error("Error uploading file to Cloudinary:", error);
-          return res.status(500).json({ error: "Something went wrong ☹" });
-        }
-        req.imageURL = result.secure_url;
-        next();
-      }
-    );
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = uploader.upload_stream(
+          {
+            resource_type: "image",
+            folder: "dogexpress",
+          },
+          (error, result) => {
+            if (error) {
+              console.error("Error uploading file to Cloudinary:", error);
+              reject(error);
+            } else {
+              req.imageURL = result.secure_url;
+              resolve(result);
+            }
+          }
+        );
 
-    result.end(req.file.buffer);
+        uploadStream.end(req.file.buffer);
+      });
+    }
+
+    next();
   } catch (error) {
     console.error("Error uploading file to Cloudinary:", error);
     res.status(500).json({ error: "Something went wrong ☹" });

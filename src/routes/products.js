@@ -17,6 +17,14 @@ router.post(
   productController.createProduct
 );
 
+router.put(
+  "/:productId",
+  authorize,
+  upload.single("image"),
+  checkFile,
+  productController.updateProduct
+);
+
 router.delete("/:productId", authorize, productController.deleteProduct);
 
 module.exports = router;

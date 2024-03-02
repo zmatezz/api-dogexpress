@@ -67,6 +67,55 @@ exports.searchProductsByName = async (req, res) => {
   }
 };
 
+exports.updateProduct = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+
+    if (!isValidObjectId(productId)) {
+      return res.status(400).json({ error: "Invalid product ID" });
+    }
+
+    await checkFile(req, res, async () => {
+      await uploadToCloudinary(req, res, async () => {
+        const {
+          name,
+          description,
+          image,
+          price,
+          category,
+          categoryId,
+          active,
+        } = req.body;
+
+        const updatedProductData = {
+          name,
+          description,
+          image: req.imageURL || image,
+          price,
+          category,
+          categoryId,
+          active,
+        };
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+          productId,
+          updatedProductData,
+          { new: true }
+        );
+
+        if (!updatedProduct) {
+          return res.status(404).json({ error: "Product not found" });
+        }
+
+        res.json(updatedProduct);
+      });
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ error: "Something went wrong ☹" });
+  }
+};
+
 exports.deleteProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
