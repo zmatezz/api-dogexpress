@@ -1,5 +1,6 @@
 const Product = require("../models/products");
 const { uploadToCloudinary, checkFile } = require("../middleware/upload");
+const { isValidObjectId } = require("mongoose");
 
 exports.createProduct = async (req, res) => {
   try {
@@ -63,5 +64,24 @@ exports.searchProductsByName = async (req, res) => {
   } catch (error) {
     console.error("Error searching products by name:", error);
     res.status(500).json({ error: "Failed to search products by name" });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+
+    if (!isValidObjectId(productId)) {
+      return res.status(400).json({ error: "Invalid product ID" });
+    }
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
   }
 };

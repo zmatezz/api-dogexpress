@@ -17,4 +17,6 @@ router.post(
   productController.createProduct
 );
 
+router.delete("/:productId", authorize, productController.deleteProduct);
+
 module.exports = router;
