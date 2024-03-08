@@ -10,4 +10,6 @@ router.get("/search", categoryController.searchCategoriesByName);
 
 router.post("/", authorize, categoryController.createCategory);
 
+router.put("/:categoryId", authorize, categoryController.updateCategory);
+
 module.exports = router;

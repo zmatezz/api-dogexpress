@@ -1,3 +1,4 @@
+const { isValidObjectId } = require("mongoose");
 const Category = require("../models/categories");
 
 exports.getCategories = async (req, res) => {
@@ -45,5 +46,50 @@ exports.searchCategoriesByName = async (req, res) => {
     res.status(200).json(categories);
   } catch (error) {
     res.status(500).json({ error: "Failed to search categories by name" });
+  }
+};
+
+exports.updateCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId;
+
+    if (!isValidObjectId(categoryId)) {
+      return res.status(400).json({ error: "Invalid category ID" });
+    }
+
+    const { active, name, changeMeat } = req.body;
+
+    const updatedCategoryData = {
+      active,
+      name,
+      changeMeat,
+    };
+
+    const originalCategory = await Category.findById(categoryId);
+
+    if (!originalCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    const isDataModified = !(
+      originalCategory.active === updatedCategoryData.active &&
+      originalCategory.name === updatedCategoryData.name &&
+      originalCategory.changeMeat === updatedCategoryData.changeMeat
+    );
+
+    if (!isDataModified) {
+      return res.status(204).end();
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      categoryId,
+      updatedCategoryData,
+      { new: true }
+    );
+
+    res.json(updatedCategory);
+  } catch (error) {
+    console.error("Failed to update category:", error);
+    res.status(500).json({ error: "Failed to update category" });
   }
 };
