@@ -36,6 +36,15 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.getUsers = async (req, res) => {
+  try {
+    const user = await User.find();
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Something went wrong ☹" });
+  }
+};
+
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.userId;
