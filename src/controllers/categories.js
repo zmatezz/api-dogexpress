@@ -93,3 +93,23 @@ exports.updateCategory = async (req, res) => {
     res.status(500).json({ error: "Failed to update category" });
   }
 };
+
+exports.deleteCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId;
+
+    if (!isValidObjectId(categoryId)) {
+      return res.status(400).json({ error: "Invalid category ID" });
+    }
+
+    const deletedCategory = await Category.findByIdAndDelete(categoryId);
+
+    if (!deletedCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+  }
+};
