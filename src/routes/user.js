@@ -6,4 +6,6 @@ const { authorize } = require("../middleware/auth");
 router.post("/create", authorize, userController.createUser);
 router.post("/login", userController.login);
 
+router.delete("/:userId", authorize, userController.deleteUser);
+
 module.exports = router;
