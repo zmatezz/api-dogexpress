@@ -45,6 +45,32 @@ exports.getUsers = async (req, res) => {
   }
 };
 
+exports.updateUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
+    const { name, email, password } = req.body;
+
+    const updatedUserData = {
+      name,
+      email,
+      password,
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedUserData, {
+      new: true,
+    });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating user:", error);
+  }
+};
+
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.userId;
