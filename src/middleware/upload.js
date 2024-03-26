@@ -1,5 +1,5 @@
 const multer = require("multer");
-const { uploader } = require("../services/image");
+const { uploader } = require("../config/cn");
 
 const storage = multer.memoryStorage();
 

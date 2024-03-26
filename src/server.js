@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
-const db = require("./db/config");
+const db = require("./config/db");
 const mongoose = require("mongoose");
 const categoriesRoutes = require("./routes/categories");
 const productsRoutes = require("./routes/products");
